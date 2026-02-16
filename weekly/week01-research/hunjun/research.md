@@ -121,7 +121,7 @@ training_set/
 
 ---
 
-## 3. 관련 연구 (2편)
+## 3. 관련 연구 (3편)
 
 ### 논문 1: Sleep EEG-Based Approach to Detect Mild Cognitive Impairment
 
@@ -155,6 +155,41 @@ training_set/
   - 수면무호흡(높은 AHI) → 인지 장애 위험 상승
   - 야간 저산소증(SpO2 저하) → 백질 변성 및 인지 저하
 - **우리에게 주는 시사점**: REM% 감소, 수면 분절, AHI, SpO2 drop이 핵심 피처
+
+---
+
+### 논문 3: Morphometric Similarity Network-based Graph Convolutional Networks for Schizophrenia Classification
+
+- **저자/연도**: Park & Lee, 2025 (Scientific Reports)
+- **논문 링크**: https://www.nature.com/articles/s41598-025-19894-8
+- **목표**: MRI 기반 형태학적 유사도 네트워크(MSN)와 GCN을 결합하여 조현병 환자를 분류
+- **데이터**: 9개 사이트에서 수집, 조현병 366명 + 건강 대조군 590명 (총 956명)
+- **방법**:
+  - **개인 그래프 (Individual MSN)**: 각 환자의 MRI에서 뇌 영역 간 형태학적 유사도를 계산하여 개인별 그래프 생성
+    - 피처: 피질 두께, 표면적, 회백질 부피, 평균 곡률, 가우시안 곡률
+    - 영역 간 피처 벡터의 상관관계 → 엣지 가중치
+  - **Population Graph 구축**: 모든 환자를 노드로, 환자 간 유사도를 엣지로 하는 그래프 생성
+    - 노드 피처 = 개인 MSN의 토폴로지 특성 (degree, clustering coefficient, betweenness 등)
+    - 엣지 가중치 = 토폴로지 피처 유사도 + 인구통계(나이, 성별 등) 정보
+    - Adaptive edge optimization으로 엣지 가중치를 학습 중 동적 최적화
+  - **GCN 분류**: Population graph 위에서 GCN을 통해 환자 vs 건강인 분류
+    - Variational edges로 학습 과정 강화
+- **결과**:
+  - 분류 정확도 **81.8%** (9개 사이트 cross-validation)
+  - 상측두이랑(superior temporal gyrus)이 조현병 판별에 가장 중요한 영역으로 확인
+  - 기존 ML 방법 대비 유의미한 성능 향상
+- **우리 프로젝트에 적용 가능한 아이디어**:
+
+  이 논문의 핵심은 **"환자 간 유사도 그래프를 만들어서 GNN으로 분류"**하는 프레임워크. 원본은 MRI 기반이지만 **PSG 데이터에도 동일한 구조를 적용 가능**:
+
+  | 원본 (MRI) | 우리 적용 (PSG) |
+  |-----------|----------------|
+  | 개인 MSN (뇌 영역 간 형태 유사도) | 개인 PSG 그래프 (EEG 채널 간 functional connectivity) |
+  | 노드 피처: 토폴로지 특성 | 노드 피처: PSG에서 추출한 피처 벡터 (Hjorth, PSD, HRV, 수면구조 등) |
+  | 엣지: 토폴로지 유사도 + 인구통계 | 엣지: PSG 피처 유사도 + 인구통계 (나이, 성별, BMI) |
+  | GCN 분류 (조현병 vs 건강) | GCN 분류 (인지장애 vs 정상) |
+
+  **장점**: 환자 간 관계를 활용하여 소수 샘플에서도 유사한 환자의 정보를 공유 → 클래스 불균형 문제에 도움이 될 수 있음. 또한 다중 사이트 데이터에서 사이트 정보를 엣지에 반영하면 domain adaptation 효과도 기대.
 
 ---
 
@@ -200,6 +235,7 @@ training_set/
 | **모델** | XGBoost/LightGBM | Random Forest 대비 성능 향상 기대 |
 | **모델** | 1D-CNN on raw EEG | End-to-End 학습으로 수동 피처 한계 극복 |
 | **모델** | Transformer | 장기 시계열 패턴 포착 |
+| **모델** | Population Graph + GCN | 환자 간 유사도 그래프 기반 분류 (Park 2025 방법론 적용) |
 | **전략** | 사이트 간 Domain Adaptation | 검증/테스트가 다른 사이트 → 일반화 핵심 |
 | **전략** | 앙상블 (Stacking) | ML + DL 모델 조합 |
 

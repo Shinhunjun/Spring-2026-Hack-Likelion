@@ -1,0 +1,70 @@
+# ===== 데이터 파일 =====
+data/
+*.edf
+*.EDF
+*.rec
+*.hdf5
+*.h5
+*.npy
+*.npz
+*.pkl
+*.pickle
+
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+*.egg
+dist/
+build/
+eggs/
+*.whl
+
+# ===== 가상환경 =====
+venv/
+env/
+.venv/
+.env
+.conda/
+
+# ===== Jupyter Notebook =====
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ===== IDE =====
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ===== 실험 로그 =====
+wandb/
+experiments/logs/
+mlruns/
+*.log
+
+# ===== 모델 체크포인트 =====
+*.pt
+*.pth
+*.ckpt
+*.h5
+*.joblib
+checkpoints/
+
+# ===== GCP =====
+*.json
+!configs/*.json
+!configs/*.yaml
+service-account-key.json
+
+# ===== 기타 =====
+.env
+.env.local
+*.csv
+!configs/*.csv
+tmp/
+temp/
